@@ -7,27 +7,71 @@ int spell_damage[1000], spell_mana[1000], dungeon[1000][1000], monster[1000]; //
 int knapsack(int i, int capacity) { //(position of item in the vector, capacity of knapsack)
   int a, b;
 
-  if (i >= m) { // looked at all spells (discad this branch)
+  if (i >= m) { //looked at all spells (discad this branch)
     return 12345678;
-    // we want the smallest value of mana that can kill the mob,
-    // so this is how we discard this option: put infinite in the branch that has used a combination of spells that dont killed
-    // the monster.
+    //we want the smallest value of mana that can kill the mob,
+    //so this is how we discard this option: put infinite in the branch that has used a combination of spells that dont killed
+    //the monster.
     //printf("has used all the spells\n");
   } else if (capacity <= 0) { // capacity < spell_damage[i] can happen!
     return 0;
     //printf("killed\n");
-    // we have killed the monster!
-    // that means this branch as a combination of spells that cost some mana but can kill the monster,
-    // and we can stop expanding this branch and return this combination.
+    //we have killed the monster!
+    //that means this branch as a combination of spells that cost some mana but can kill the monster,
+    //and we can stop expanding this branch and return this combination.
   } else {
-    a = spell_mana[i] + knapsack(i, capacity - spell_damage[i]); // reuse the current spell
+    a = spell_mana[i] + knapsack(i, capacity - spell_damage[i]); //reuse the current spell
     b = knapsack(i + 1, capacity); //try the next spell
-    if (a < b) { // return the smallest ammount of mana that can kill the monster
+    if (a < b) { //return the smallest ammount of mana that can kill the monster (something like minmax: minimal ammount of the max that we can use)
       return a;
     }
     return b;
   }
 }
+
+
+void dijkstra (int n) { //(number of vertex)
+  int i, left;
+
+  int fixo[n];
+  int dist[n]; //hold the distance from 0 to all other nodes
+
+  for(i = 0; i < n; i++) {
+    fixo[i] = 0;
+    dist[i] = 123456789; //set all distances to infinite
+  }
+  dist[0] = 0; //set the distance from origin to origin to 0
+
+  for(left = n; left > 0; left--) {
+    int no = -1;
+    for(i = 0; i < n; i++) {
+      if(!fixo[i] && (no == -1 || dist[i] < dist[no])) {
+        no = i;
+      }
+    }
+    fixo[no] = 1;
+
+    if(dist[no] == 123456789) {
+      break;
+    }
+
+    for(i = 0; i < n; i++) {
+      if(dist[i] > dist[no] + dungeon[no][i]) {
+        dist[i] = dist[no] + dungeon[no][i];
+      }
+    }
+  }
+  for(i = 0; i < n; i++) {
+    printf("%d ", dist[i]);
+  }
+  printf("\n");
+}
+
+/*
+int dijkstra(int s, int g) { //(start node, goal) minor path returning the weight
+  return weight; //smallest cost
+}
+*/
 
 int main ( ) {
   int i, j, vertex1, vertex2;
@@ -57,12 +101,14 @@ int main ( ) {
     printf("Monsters\n");
     for (i = 0; i < k; i++) { //hall where the monster lives an his life
       scanf("%d %d", &j, &monster_life);
+      j = j - 1; // because our halls names start from 0 and not from 1
       printf("%d %d\n", j, monster_life);
       dungeon[j][j] = dungeon[j][j] + knapsack(0, monster_life); //already calculates the weight of that hall and saves where we have space [j][j]
       printf("Mana: %d\n", dungeon[j][j]);
     }
 
-    /*
+    dijkstra(n);
+
     for (i = 0; i < n; i++) {
       printf("%d: ", i);
       for (j = 0; j < n; j++) {
@@ -71,7 +117,7 @@ int main ( ) {
       printf("\n");
     }
     printf("\n");
-    */
+
 
     scanf("%d %d %d %d", &m, &n, &g, &k);
   }
