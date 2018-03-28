@@ -2,13 +2,15 @@
 
 int m, n, g, k; //number of spells, number of halls (and their names), number of galleries, number of monsters
 int spell_damage[1000], spell_mana[1000], dungeon[1000][1000], monster[1000]; //dungeon = halls + galleries (an matrix graph)
+const int INF = 123456789;
+
 
 //knapsack_unbounded = can use the same item over and over
 int knapsack(int i, int capacity) { //(position of item in the vector, capacity of knapsack)
   int a, b;
 
   if (i >= m) { //looked at all spells (discad this branch)
-    return 12345678;
+    return INF;
     //we want the smallest value of mana that can kill the mob,
     //so this is how we discard this option: put infinite in the branch that has used a combination of spells that dont killed
     //the monster.
@@ -29,49 +31,6 @@ int knapsack(int i, int capacity) { //(position of item in the vector, capacity 
   }
 }
 
-
-void dijkstra (int n) { //(number of vertex)
-  int i, left;
-
-  int fixo[n];
-  int dist[n]; //hold the distance from 0 to all other nodes
-
-  for(i = 0; i < n; i++) {
-    fixo[i] = 0;
-    dist[i] = 123456789; //set all distances to infinite
-  }
-  dist[0] = 0; //set the distance from origin to origin to 0
-
-  for(left = n; left > 0; left--) {
-    int no = -1;
-    for(i = 0; i < n; i++) {
-      if(!fixo[i] && (no == -1 || dist[i] < dist[no])) {
-        no = i;
-      }
-    }
-    fixo[no] = 1;
-
-    if(dist[no] == 123456789) {
-      break;
-    }
-
-    for(i = 0; i < n; i++) {
-      if(dist[i] > dist[no] + dungeon[no][i]) {
-        dist[i] = dist[no] + dungeon[no][i];
-      }
-    }
-  }
-  for(i = 0; i < n; i++) {
-    printf("%d ", dist[i]);
-  }
-  printf("\n");
-}
-
-/*
-int dijkstra(int s, int g) { //(start node, goal) minor path returning the weight
-  return weight; //smallest cost
-}
-*/
 
 int main ( ) {
   int i, j, vertex1, vertex2;
@@ -107,7 +66,6 @@ int main ( ) {
       printf("Mana: %d\n", dungeon[j][j]);
     }
 
-    dijkstra(n);
 
     for (i = 0; i < n; i++) {
       printf("%d: ", i);
