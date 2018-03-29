@@ -43,7 +43,11 @@ int dijkstra (int n) { // (size of the dungeon)
   typedef pair<int, pair<int, int>> E;
   E aux;
   priority_queue<E, vector<E>, greater<E> > pq; // what is the element that it will hold, how it will hold (vector), order criteria
-  int u, alt, dist[n] = {INF}; // vector of distances
+  int u, alt, dist[n]; // vector of distances
+  //dis[] = {INF};
+  for (int i = 0; i < n; i++) {
+    dist[i] = INF;
+  }
 
   for (int i = 1; i < n; i++) { // insert all distances on the priority_queue (initalizeds with INFINITE)
     pq.push(make_pair(INF, make_pair(i, -1))); // (distance, (current node, from where it comes))
@@ -59,9 +63,9 @@ int dijkstra (int n) { // (size of the dungeon)
       u = aux.second.first; //node that we are looking
       if (dungeon[u][v] == 1) { //if there is an edge from u to v ("for each neighbor of u")
         alt = dist[u] + dungeon[u][u]; //dungeon[u][u] because the weight is in the vertex u not in the edge (u -> v)
-        printf("alt %d distv %d\n", alt, dist[v]);
+
+        //printf("u %d alt %d distv %d\n", u, alt, dist[v]);
         if (alt < dist[v]) { //a shorter path to v has been found!
-          printf("alt %d\n", alt);
           dist[v] = alt;
           pq.push(make_pair(dist[v], make_pair(v, u))); // dont matter if there is 2 weights for that vertex in the queue, it will always choose the smallest
         }
@@ -116,7 +120,14 @@ int main ( ) {
       //printf("Mana: %d\n", dungeon[j][j]);
     }
 
-    printf("%d\n", dijkstra(n));
+    int res = dijkstra(n);
+
+    if (res != INF) {
+      printf("%d\n", res);
+    } else {
+      printf("%d\n", -1);
+    }
+
 
     /*
     for (i = 0; i < n; i++) {
