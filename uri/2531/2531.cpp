@@ -1,25 +1,31 @@
 #include <cstdio>
 
-void segtree_build (int arr[], int tree[], int node, int left, int right) {
+// op = 0: smallest value
+// op = 1: biggest value
+int segtree_build (int arr[], int tree[], int node, int left, int right, int op) {
   if (left == right) {
     tree[node] = arr[left];
   } else {
     int mid = (left + right) / 2;
-    segtree_build(arr, tree, 2*node, left, mid);
-    segtree_build(arr, tree, 2*node+1, mid+1, right);
-    tree[node] = tree[2*node] + tree[2*node+1];
+    segtree_build(arr, tree, 2*node, left, mid, op);
+    segtree_build(arr, tree, 2*node+1, mid+1, right, op);
 
-    // if (tree[2*node] > tree[2*node+1]){
-    //   tree[node] = tree[2*node];
-    // } else {
-    //   tree[node] = tree[2*node+1];
-    // }
-    // if (tree[node] < 0) {
-    //   tree[node] = tree[node] * -1;
-    // }
+    if (op == 0) {
+      if (tree[2*node] < tree[2*node+1]){
+        tree[node] = tree[2*node];
+      } else {
+        tree[node] = tree[2*node+1];
+      }
+    } else if (op == 1) {
+        if (tree[2*node] > tree[2*node+1]){
+          tree[node] = tree[2*node];
+        } else {
+          tree[node] = tree[2*node+1];
+        }
+    }
   }
-  printf("%d ", tree[node]);
-  return;
+  //this return the root
+  return tree[node];
 }
 
 int main ( ) {
@@ -42,16 +48,9 @@ int main ( ) {
     if (op == 1) {
       p[l-1] = r;
     } else if (op == 2) {
-      //for (int i = 0; i < n; i++) {
-        segtree_build(p, tree, i, 0, n-1);
-        //printf("%d ", p[i]);
-      //}
-      //printf("\n");
-
-      // for (int j = 0; j < 2*n-1; j++) {
-      //   printf("%d ", tree[j]);
-      // }
-      // printf("\n");
+      int min = segtree_build(p, tree, i, l-1, r-1, 0);
+      int max = segtree_build(p, tree, i, l-1, r-1, 1);
+      printf("%d\n", max - min);
     }
   }
   return 0;
